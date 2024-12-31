@@ -1,13 +1,14 @@
 package com.example.Genesis.Project.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "newgenesis")
+@Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -17,9 +18,11 @@ public class User {
     private String surname;
 
     @Column(nullable = false, unique = true, length = 12)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String personID;
 
     @Column(nullable = false, unique = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String uuid;
 
     public User() {}
@@ -32,12 +35,12 @@ public class User {
         this.surname = surname;
     }
 
-    public String getPersonID() {
-        return personID;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -56,15 +59,19 @@ public class User {
         this.surname = surname;
     }
 
+    public String getPersonID() {
+        return personID;
+    }
+
+    public void setPersonID(String personID) {
+        this.personID = personID;
+    }
+
     public String getUuid() {
         return uuid;
     }
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-
-    public void setId(Long id) {
     }
 }

@@ -21,46 +21,49 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers(@RequestParam(value = "detail", defaultValue = "false") boolean detail) {
+        return ResponseEntity.ok(userService.getAllUsers(detail));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<User>> getUserById(@RequestParam(value = "detail", defaultValue = "false") boolean detail, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id, detail));
+    }
 
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user) throws Exception {
-        return ResponseEntity.ok(userService.addUser(user));
+        User newUser = userService.addUser(user);
+        return ResponseEntity.ok(newUser);
     }
 
-    @GetMapping("/personId/{personId}")
-    public ResponseEntity<String> getUserByPersonID(@PathVariable String personId) throws IOException {
-        String result = userService.getUserByPersonID(personId);
-        return ResponseEntity.ok(result);
-    }
+    // tohle neni potreba
+//    @GetMapping("/personId/{personId}")
+//    public ResponseEntity<String> getUserByPersonID(@PathVariable String personId) throws IOException {
+//        String result = userService.getUserByPersonID(personId);
+//        return ResponseEntity.ok(result);
+//    }
 
+    @PutMapping()
+    public ResponseEntity<User> updateUser(@RequestBody User user) throws Exception {
 
-    @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) throws Exception {
-        user.setId(id);
         return ResponseEntity.ok(userService.updateUser(user));
     }
 
 
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 
 
-    @GetMapping("/uuid/{uuid}")
-    public ResponseEntity<String> getUserByUuid(@PathVariable String uuid) {
-        return ResponseEntity.ok(userService.getUserByUuid(uuid));
-    }
+    // tohle neni potreba
+//    @GetMapping("/uuid/{uuid}")
+//    public ResponseEntity<String> getUserByUuid(@PathVariable String uuid) {
+//        return ResponseEntity.ok(userService.getUserByUuid(uuid));
+//    }
 
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
+
 }

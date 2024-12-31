@@ -43,9 +43,9 @@ public class ProjectApplication extends SpringBootServletInitializer {
         public DataSource dataSource() {
             DriverManagerDataSource dataSource = new DriverManagerDataSource();
             dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-            dataSource.setUrl("jdbc:mysql://localhost:3306/Genesis_Database");
+            dataSource.setUrl("jdbc:mysql://localhost:3306/genesis");
             dataSource.setUsername("root");
-            dataSource.setPassword("MySql159-+");
+            dataSource.setPassword("heslo123");
             return dataSource;
         }
 

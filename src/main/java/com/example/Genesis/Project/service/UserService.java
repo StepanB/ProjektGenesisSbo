@@ -20,18 +20,74 @@ public class UserService {
     }
 
     public User addUser(User user) throws Exception {
-        if (userRepository.findByPersonID(user.getPersonID())) {
-            throw new Exception("PersonID already exists!");
+
+        // kontrola PersonId v souboru:
+        boolean isInFile = isPersonIDInTextFile(user.getPersonID());
+        if (!isInFile) {
+            return null;
         }
+
+        // kontrola unikatnosti (bylo by lepsi resit primo v databazi, ale to je ted fuk)
+        boolean isInDatabase = isPersonIDInDatabase(user.getPersonID());
+        if (isInDatabase) {
+            return null;
+        }
+
+        // vygenerovani UUID
+        String uuid = generateUuid();
+        user.setUuid(uuid);
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    private boolean isPersonIDInDatabase(String personId) {
+        Optional<User> user = userRepository.findByPersonID(personId);
+        if (user.isPresent()) {
+            return true;
+        }
+        return false;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    private String generateUuid() {
+        return java.util.UUID.randomUUID().toString();
+    }
+
+    private boolean isPersonIDInTextFile(String personID) {
+        String fileName = "src/main/resources/dataPersonID";
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] lineParts = line.split("\n");
+                if (lineParts.length > 0 && lineParts[0].equals(personID)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Optional<User> getUserById(Long id, boolean detail) {
+        Optional<User> user = userRepository.findById(id);
+
+        if (!detail) {
+            user.get().setPersonID(null);
+            user.get().setUuid(null);
+        }
+
+        return user;
+    }
+
+    public List<User> getAllUsers(boolean detail) {
+        List<User> users = userRepository.findAll();
+        if (!detail) {
+            for (User u : users) {
+                u.setPersonID(null);
+                u.setUuid(null);
+            }
+        }
+
+        return users;
     }
 
     public User updateUser(User updatedUser) throws Exception {
@@ -40,7 +96,6 @@ public class UserService {
             User user = userOptional.get();
             user.setName(updatedUser.getName());
             user.setSurname(updatedUser.getSurname());
-            user.setUuid(updatedUser.getUuid());
             return userRepository.save(user);
         } else {
             throw new Exception("User not found");
